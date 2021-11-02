@@ -29,7 +29,7 @@
 
 
 #TOC> ==========================================================================
-#TOC> 
+#TOC>
 #TOC>   Section  Title                                          Line
 #TOC> --------------------------------------------------------------
 #TOC>   1        REVIEW                                           50
@@ -43,7 +43,7 @@
 #TOC>   4        RANDOM GRAPHS AND GRAPH METRICS                 542
 #TOC>   4.1        Diameter                                      579
 #TOC>   5        GRAPH CLUSTERING                                648
-#TOC> 
+#TOC>
 #TOC> ==========================================================================
 
 
@@ -689,3 +689,80 @@ par(oPar)
 
 
 # [END]
+# =    6  TASKS  ====================================================
+
+pmfPC <- function(cts, nam) {
+  # Convert counts to a p.m.f, adding a pseudocount of 0.5 to all categories
+  # of outcomes (Jeffreys prior).
+  # Parameters:
+  #    cts  num   raw counts
+  #    nam        names of the categories, converted to char
+  # Value   a probability mass function
+
+  nam <- as.character(nam)
+  if (!all(names(cts) %in% nam)) {
+    stop("PANIC: names in \"cts\" do not match \"nam\"!")
+  }
+  pmf <- numeric(length(nam))
+  names(pmf) <- nam
+  pmf[names(cts)] <- cts[names(cts)]
+  pmf <- pmf + 0.5    # add pseudocounts
+  return(pmf/sum(pmf))
+}
+
+KLdiv <- function(p, q) {
+  # p and q are two pmfs of discrete probability distributions
+  # with the same outcomes, which are nowhere 0.
+  # Value:  Kullback-Leibler divergence  sum(p * log( p / q))).
+
+  if (length(p) != length(q)) {
+    print(length(p))
+    print(length(q))
+    stop("PANIC: input vector lengths differ!")
+  }
+  if (any(c((p == 0), (q == 0)))) {
+    stop("PANIC: 0's found in input vectors!")
+  }
+
+  return(sum(p * log( p / q )))
+}
+
+
+graphKLDiv <- function(x) {
+  scCCnet <- readRDS("./data/scCCnet.rds")
+  scCCGraph <- igraph::graph_from_data_frame(scCCnet, directed = FALSE)
+  # calculate the probability distribution of degrees
+  # add pseudocounts of 0.5 in case of 0
+  scCCDeg <- igraph::degree.distribution(scCCGraph)
+  xDeg <- igraph::degree.distribution(x)
+
+  length(scCCDeg) <- max(length(scCCDeg), length(xDeg))
+  scCCDeg[is.na(scCCDeg)] <- 0
+
+  length(xDeg) <- max(length(scCCDeg), length(xDeg))
+  xDeg[is.na(xDeg)] <- 0
+
+  scCCDeg <- (scCCDeg + 0.5 / length(scCCDeg))
+  #scCCDeg <- scCCDeg / sum(scCCDeg)
+
+  xDeg <- (xDeg + 0.5 / length(xDeg))
+  #xDeg <- xDeg / sum(xDeg)
+
+  plot(scCCDeg)
+
+  plot(xDeg)
+
+  return(KLdiv(scCCDeg, xDeg))
+}
+
+scCCnet <- readRDS("./data/scCCnet.rds")
+scCCGraph <- igraph::graph_from_data_frame(scCCnet, directed = FALSE)
+d <- igraph::degree(scCCGraph)
+ddistro <- igraph::degree.distribution(scCCGraph)
+d2 <- 4 * d
+
+sim <- igraph::sample_degseq(d2)
+dSim <- igraph::degree(sim)
+ddistroSim <- igraph::degree.distribution(sim)
+
+graphKLDiv(x = sim)

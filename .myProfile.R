@@ -14,7 +14,7 @@
 # ==============================================================================
 # options(stringsAsFactors = FALSE)
 
-myEMail <- "<your-e-mail-address-here>"        # e.g. "u.franklin@utoronto.ca"
-myStudentNumber <- <your-student-number-here>  # e.g. 1003141592
+myEMail <- "kevinjx.gao@mail.utoronto.ca"        # e.g. "u.franklin@utoronto.ca"
+myStudentNumber <- 1006967338  # e.g. 1003141592
 
 # [END]

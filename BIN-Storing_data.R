@@ -33,7 +33,7 @@
 
 
 #TOC> ==========================================================================
-#TOC> 
+#TOC>
 #TOC>   Section  Title                                                   Line
 #TOC> -----------------------------------------------------------------------
 #TOC>   1        A Relational Datamodel in R: review                       63
@@ -56,7 +56,7 @@
 #TOC>   3.3        Create an R script to create your own database         572
 #TOC>   3.3.1          Check and validate                                 600
 #TOC>   3.4        Task: submit for credit (part 2/2)                     645
-#TOC> 
+#TOC>
 #TOC> ==========================================================================
 
 
@@ -127,8 +127,9 @@ rm(x)
 
 philDB$person$name[1]   # Laozi
 
-# task: Write an expression that returns all "school" entries from the
+# task (completed): Write an expression that returns all "school" entries from the
 #       person table.
+philDB$person$school
 
 # Let's now add another person. There are several ways to do this, the
 # conceptually cleanest is to create a one-row dataframe with the data, and
@@ -138,6 +139,8 @@ philDB$person$name[1]   # Laozi
 (x <- data.frame(a=1:4, b=11:14))
 (y <- data.frame(a=6, c=17))
 rbind(x, y)
+
+# NOTE: this will result in an error because the column names do not match
 
 (y <- data.frame(a=6, b=17))
 rbind(x, y)
@@ -187,6 +190,7 @@ autoincrement(philDB$person)
 # existing table with the new one.
 
 sel <- !(philDB$person$name == "Zhuangzi")   # select ...
+# NOTE: select all columns in `person` whose name is not "Zhuangzi"
 philDB$person <- philDB$person[sel, ]        # ... and replace
 
 str(philDB)
@@ -206,7 +210,7 @@ str(philDB)
 # go back, re-read, play with it, and ask for help. These are the foundations.
 
 
-# ===   1.1.1  completing the database                       
+# ===   1.1.1  completing the database
 
 
 # Next I'll add one more person, and create the other two tables:
@@ -279,6 +283,33 @@ for (ID in pID) {
 #    Paste your code into your submission page. Enclose it in <pre> ... </pre>
 #    tags.
 #
+
+kant <- data.frame(
+  id = autoincrement(philDB$person),
+  name = "Immanuel Kant",
+  born = "1724",
+  died = "1804",
+  school = "Enlightenment Philosophy"
+)
+
+philDB$person <- rbind(philDB$person, kant)
+
+kant_books = data.frame(
+  id = max(philDB$books$id)+1:2,
+  title = c("Critique of Pure Reason", "Critique of Judgement"),
+  published = c("1781", "1790")
+)
+
+philDB$books <- rbind(philDB$books, kant_books)
+
+kant_join = data.frame(
+  id = autoincrement(philDB$works):(autoincrement(philDB$works)+1),
+  personID = replicate(2, kant$id),
+  bookID = kant_books$id
+)
+
+philDB$works <- rbind(philDB$works, kant_join)
+
 #    Write and submit code that lists the philosophical schools in
 #    alphabetical order, and the books associated with them, also
 #    alphabetically. Format your output like:
@@ -292,6 +323,28 @@ for (ID in pID) {
 #    in <pre> ... </pre> tags. DO NOT POST A SCREENSHOT OF YOUR OUTPUT,
 #    BUT COPY THE EXACT, COMPLETE  OUTPUT, PASTE IT INTO YOUR SUBMISSION,
 #    AND FORMAT IT CORRECTLY.
+
+pID = philDB$person$id[order(philDB$person$school)]
+
+sel <- numeric()
+
+for (ID in pID) {
+  sel <- which(philDB$works$personID == ID)
+  school <- philDB$person$school[ID]
+
+  books_sel <- philDB$works$bookID[sel]
+  books_id <- philDB$books$id[books_sel]
+
+  books_title <- philDB$books$title[books_id]
+  books_title_sorted <- books_title[order(books_title)]
+  books_year <- philDB$books$published[books_id]
+  books_year_sorted <- books_year[order(books_year)]
+
+  cat(sprintf("%s", school))
+  cat("\n")
+  cat(sprintf("\r  %s - (%s)\n", books_title_sorted, books_year_sorted))
+}
+
 
 
 # =    2  Implementing the protein datamodel  ==================================
@@ -363,6 +416,8 @@ unlist(x$sequence)
 
 # ==   2.2  "Sanitizing" sequence data  ========================================
 
+source("./scripts/ABC-dbUtilities.R")
+source("./.utilities.R")
 
 # Examine the dbSanitizeSequence() function:
 
@@ -385,7 +440,7 @@ dbSanitizeSequence(x)
 
 # ==   2.3  Create a protein table for our data model  =========================
 
-# ===   2.3.1  Initialize the database                       
+# ===   2.3.1  Initialize the database
 
 
 # The function dbInit contains all the code to return a list of empty
@@ -397,7 +452,7 @@ myDB <- dbInit()
 str(myDB)
 
 
-# ===   2.3.2  Add data                                      
+# ===   2.3.2  Add data
 
 
 # fromJSON() returns a dataframe that we can readily process to add data
@@ -444,7 +499,7 @@ source("./scripts/ABC-createRefDB.R")
 str(myDB)
 
 
-# ===   2.4.1  Examples of navigating the database           
+# ===   2.4.1  Examples of navigating the database
 
 
 # You can look at the contents of the tables in the usual way we access
@@ -478,6 +533,7 @@ myDB$taxonomy$species[sel]
 
 # ==   2.5  Updating the database  =============================================
 
+MYSPE <- "Mixia osmundae"
 
 # Basic tasks for databases include retrieving data, selecting data, updating
 # and deleting data. Here we will take a simple, pedestrian approach:
@@ -579,15 +635,11 @@ if (file.exists(sprintf("./myScripts/%staxonomy.json", biCode(MYSPE)))) {
 # - than add the two commands that add your protein and taxonomy data,
 #     they should look like:
 #
-# myDB <- dbAddProtein(myDB,
-#                      jsonlite::fromJSON("./myScripts/MBP1_<MYSPE>.json"))
-# myDB <- dbAddTaxonomy(myDB,
-#                       jsonlite::fromJSON("./myScripts/<MYSPE>taxonomy.json"))
 #
 #
 # - save the .json file in the ./myScripts/ folder and source() it:
 #
-#     source("./myScripts/makeProteinDB.R")  # <<<- This command ...
+source("./myScripts/makeProteinDB.R")  # <<<- This command ...
 #
 # ... needs to be executed whenever you recreate the database. In particular,
 # whenever you have added or modified data in any of the JSON files. Later you
@@ -597,7 +649,7 @@ if (file.exists(sprintf("./myScripts/%staxonomy.json", biCode(MYSPE)))) {
 # "break" them with a code experiment. But always have a script with
 # which you can create what you need.
 
-# ===   3.3.1  Check and validate                            
+# ===   3.3.1  Check and validate
 
 
 # Is your protein named according to the pattern "MBP1_MYSPE"? It should be.

@@ -33,7 +33,7 @@
 
 
 #TOC> ==========================================================================
-#TOC> 
+#TOC>
 #TOC>   Section  Title                                             Line
 #TOC> -----------------------------------------------------------------
 #TOC>   1        PREPARATIONS                                        51
@@ -44,12 +44,14 @@
 #TOC>   4.2        Visualizing proportions: Pie chart               163
 #TOC>   4.3        Visualizing proportions: Nested squares          241
 #TOC>   4.4        Visualizing proportions: Sankey diagrams         278
-#TOC> 
+#TOC>
 #TOC> ==========================================================================
 
 
 # =    1  PREPARATIONS  ========================================================
 #
+
+source("./myScripts/.myProfile.R")
 
 # Execute the two conditionals below:
 if (! file.exists("./myScripts/.myProfile.R")) {
