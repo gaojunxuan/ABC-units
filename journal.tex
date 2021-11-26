@@ -1,0 +1,75 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\begin{document}
+
+Task: You wanted to do something for BCB and went to the unit map. On the unit map, there is a link to the student wiki. Instead of going to the student wiki, you want the link to bring you directly to user page.
+
+Idea: We learned about editing wiki page last time. Maybe edit the wiki page?
+Problem: But the unit map is not a Wiki page.
+What is it then? It is an SVG! But what is SVG?
+
+Quick Googling tells us that SVG stands for scalable vector graphics.
+
+What is scalable? You can zoom in infinitely without it getting pixelated.
+
+Question: Do we want to change the version on the server, or a local copy?
+
+Kevin: I suggest downloading a local copy and go from there.
+
+How to save it? Ctrl+S. or right click and save as.
+
+Can we try InkScape? But it is very sophiscated, and some operation may not be obvious.
+
+SVG is encoded in XML, so we can edit it using notepad.
+
+Li will try to open the SVG in RStudio.
+
+When you hover on the link, the link shows up at the bottom corner. The link contains the keyword "student". Use Ctrl+F to find the keyword "student". Once we find the link, we can make modifications to it. Replace that link with the link to the user page, and also change the "title" property to change the alt text to "My User Page". 
+
+It worked!!
+
+What did we learn?
+We can change SVG files, make them to have different behaviors. The syntax is very different from most things we do, which are mostly sequential.
+
+Problem: What if Professor changes the unit map. The local copy will become out of sync with the online version. Out local copy will not reflect the correct map anymore because it is not synchronized.
+
+What should we be trying to do?
+We have this file on the server. When we download it to our computer, it may become out of sync with the server.
+
+Can we do it only such as Google Docs? But it depends on software platform.
+
+We can write a script that pulls the current version of the map and update it.
+
+Can we convince the professor to update the page? But that puts the work on the professor's shoulder and he would have to write the script to update the file.
+
+DOM: Document Object Model. Parse the HTML and XML into a tree hierarchy structure. You can manipulate the DOM.
+
+One possible strategy suggested by Kevin: create a local HTML page, dynamically load the SVG either by embedding it or loading using JavaScript. Then write another script to update the link. Use JavaScript to modify the DOM. 
+
+Bookmarklet. Applet in a bookmark that allows you to run JavaScript code.
+
+Whenever I want to open up the nature paper, I have to go to the University library, and sometimes I cannot even find the paper right away.
+
+myaccess.library.utoronto.ca allows you to access journals without logging into the journal website.
+
+We want to able to access the journal without going into the library website. We want it to automatically redirect us to the UofT Library page.
+
+Greassemonkey might also be a good option. It allows you to reuse scripts/bookmarklets other people have created and add them into your browser.
+
+What are some simple examples of bookmarklets?
+
+First create a bookmark. Edit the bookmark and put JavaScript code in the URL.
+
+Whatever page you opened, JavaScript will load on the page.
+
+There is a JavaScript property called window.location. It allows to get the current page URL and also redirect to a different URL. window.location.assign() will redirect the current page to a different URL.
+
+Using that, we can redirect to a fixed URL. We want to be able to redirect dynamically.
+
+We can use RegEx (regular expression) to find patterns. The regex that we use to match the URL is
+
+
+
+
+
+\end{document}

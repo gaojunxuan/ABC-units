@@ -30,7 +30,7 @@
 
 
 #TOC> ==========================================================================
-#TOC> 
+#TOC>
 #TOC>   Section  Title                                              Line
 #TOC> ------------------------------------------------------------------
 #TOC>   1        Preparations                                         55
@@ -48,7 +48,7 @@
 #TOC>   6        Sequence Logos                                      549
 #TOC>   6.1        Subsetting an alignment by motif                  558
 #TOC>   6.2        Plot a Sequence Logo                              607
-#TOC> 
+#TOC>
 #TOC> ==========================================================================
 
 
@@ -144,6 +144,7 @@ MBP1set
 # ... or to see the whole thing (cf. ?MsaAAMultipleAlignment ... print method):
 msa::print(msaM, show=c("alignment", "complete"), showConsensus=FALSE)
 
+msa::print(msaM)
 
 # You see that the alignment object has sequence strings with hyphens as
 # indel-characters. The names are printed to the console. And you also see that
@@ -172,6 +173,7 @@ msa::print(msaM, show=c("alignment", "complete"), showConsensus=FALSE)
 data(BLOSUM62, package = "Biostrings")
 
 msaMScores <- msa::msaConservationScore(msaM, substitutionMatrix = BLOSUM62)
+
 plot(msaMScores, type = "l", col = "#205C5E", xlab = "Alignment Position")
 
 # That plot shows the well-aligned regions (domains ?) of the sequence, but it
@@ -189,6 +191,15 @@ for (i in (1 + wRadius):(len - wRadius)) {
 points(v, col = "#FFFFFF", type = "l", lwd = 4.5)
 points(v, col = "#3DAEB2", type = "l", lwd = 3)
 
+lev <- cut(v, labels = FALSE, breaks = 10)
+
+#myPal <- colorRampPalette(c("#e8e8e8", "#d6d6d6","#c4c4c4", "#b2b2b2",
+
+#                            "#f4a582", "#d6604d", "#b2182b"))
+
+#myCol <- myPal(max(lev))
+
+#barplot(msaMScores, col=myCol[lev], border = NA)
 
 # You can set a threshold and use rle() to define ranges of values that fall
 # above and below the threshold, and thus approximate domain boundaries:
@@ -241,7 +252,7 @@ for (i in seq_along(highScoringRanges$lengths)) {
 #   -  adjust the sequence names
 #   -  convert to msaAAMultipleAlignment object
 
-# ===   4.1.1  importing an .aln file                   
+# ===   4.1.1  importing an .aln file
 
 # The seqinr package has a function to read CLUSTAL W formatted .aln files ...
 if (! requireNamespace("seqinr", quietly=TRUE)) {
