@@ -1,8 +1,8 @@
 # Miscellaneous
 .Ds_store
-instructor/
+# instructor/
 dev/
-myScripts/
+# myScripts/
 
 # History files
 .Rhistory
@@ -12,8 +12,8 @@ myScripts/
 # .RData
 
 # Files produced in assingments
-data/APSESphyloSet.mfa
-data/APSEStreeRproml.rds
+# data/APSESphyloSet.mfa
+# data/APSEStreeRproml.rds
 
 # Example code in package build process
 *-Ex.R
